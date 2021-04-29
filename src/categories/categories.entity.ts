@@ -13,7 +13,7 @@ export class CategorieEntity {
     @CreateDateColumn({type : 'timestamp', default:()=> 'CURRENT_TIMESTAMP'})
     createdAt : Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default:()=> 'CURRENT_TIMESTAMP'})
+    @UpdateDateColumn()
     updatedAt : Date;
 
     @ManyToMany( type => ArticleEntity, article => article.categories)

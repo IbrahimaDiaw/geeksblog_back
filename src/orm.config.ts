@@ -13,6 +13,6 @@ export const DATABASE_CONFIG : TypeOrmModuleOptions ={
     migrationsTableName: 'migrations',
     migrations: ['migration/*.js'],
     cli: {
-        migrationsDir: 'migration',
+        migrationsDir: 'src/migration',
     },
 }
