@@ -40,8 +40,23 @@ export class CommentService {
 
             comment.articles = article;
             comment.message = commentDto.message;
-
+            comment.auteur = commentDto.auteur;
             const commentCreate = await this.commentRepository.save(comment);
             return this.getCommentById(commentCreate.id);
        } 
+
+       async updateComment( commentId : string, commentDto : CommentDTO) : Promise<CommentEntity>{
+           const comment = await this.commentRepository.findOneOrFail(commentId);
+           const commentUpdate : CommentEntity = {
+               updatedAt : new Date(),
+               ...commentDto,
+           }
+           await this.commentRepository.update(commentId, commentUpdate);
+           return await this.commentRepository.findOneOrFail(commentId);
+       }
+
+       async removeComment( commentId : string ) : Promise<CommentEntity>{
+           const comment = await this.commentRepository.findOneOrFail(commentId);
+           return await this.commentRepository.remove(comment);
+       }
 }
