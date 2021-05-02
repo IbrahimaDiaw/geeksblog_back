@@ -6,6 +6,7 @@ import { CommentService } from 'src/comment/comment.service';
 import { UserEntity } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { ArticleDTO } from './articles.dto';
 import { ArticleEntity } from './articles.entity';
 
 @Injectable()
@@ -62,6 +63,97 @@ export class ArticlesService {
             .getCount();
 
         return await articlesCount;
+    }
+
+    async getArticlesByCategorie( categorie : CategorieEntity) : Promise<ArticleEntity[]>{
+        const articles = await this.articleRepository
+            .createQueryBuilder('article')
+            .leftJoinAndSelect('article.auteur', 'user', 'user.id = article.auteur') // n->1 relation
+            .leftJoinAndSelect('article.comments', 'comment', 'comment.article = article.id') //1->n relation
+            .innerJoinAndSelect('article.categories', 'categorie', 'categorie.id = :categorieID',{
+                    categorieID : categorie.id
+            })
+            .orderBy('article.createdAt', 'DESC')
+            .getMany();
+
+        return articles;
+    }
+
+    async getArticlesCountByAuteur(auteur : UserEntity): Promise<number>{
+        const articlesCount = await this.articleRepository.count({
+            where:{
+                auteur,
+            },
+        })
+
+        return articlesCount;
+    }
+
+    async getArticlesByAuteur( auteur : UserEntity) : Promise<ArticleEntity[]>{
+        const articles = await this.articleRepository.find({
+            where:{
+                auteur
+            },
+            order:{
+                createdAt: 'DESC'
+            },
+            relations: ['comments', 'categories', 'auteur']
+        });
+
+        return articles;
+    }
+
+    async getArticleById( article : string ) : Promise<ArticleEntity>{
+        return await this.articleRepository.findOneOrFail(article,{
+            relations: ['comments', 'categories', 'auteur']
+        });
+    }
+
+
+    async createArticle ( articleDTO : ArticleDTO) : Promise<ArticleEntity>{
+         const articleCreate : ArticleEntity = { ...articleDTO };
+         articleCreate.categories = await this.categorieIdsToEntities(articleDTO.categorieIds);
+
+        return await this.articleRepository.save(articleCreate);
+    }
+
+
+    async updateArticle( articleId : string, articleDTO : ArticleDTO) : Promise<ArticleEntity>{
+        await this.articleRepository.findOneOrFail(articleId);
+        const categoriesIds = { ...articleDTO.categorieIds};
+        delete articleDTO.categorieIds;
+
+        const articleConnect : ArticleEntity = {
+            updatedAt : new Date(),
+            ...articleDTO
+        };
+        await this.articleRepository.update(articleId, articleConnect);
+        const articleUpdate = await this.articleRepository.findOneOrFail(articleId);
+        articleUpdate.categories = await this.categorieIdsToEntities(categoriesIds);
+
+        return await this.articleRepository.save(articleUpdate);
+    }
+
+    
+    async deleteArticle( articleId : string ): Promise<ArticleEntity>{
+        const article = await this.articleRepository.findOneOrFail(articleId,{
+            relations: ['comments']
+        });
+        for(const comment of article.comments){
+            //await this.commentService.deleteComment(comment);
+        }
+
+        return this.articleRepository.remove(article);
+    }
+
+    private async  categorieIdsToEntities(categorieIDs : string[]) : Promise<CategorieEntity[]>{
+        const entities : CategorieEntity[] = [];
+        for( const categorieID of categorieIDs){
+            const entity = await this.categorieService.getCategorieById(categorieID);
+            entities.push(entity);
+        }
+
+        return entities;
     }
     
 }

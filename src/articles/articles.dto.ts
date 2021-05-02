@@ -1,5 +1,4 @@
-import { IsDate, isDate, IsEmpty } from "class-validator";
-import { CategorieEntity } from "src/categories/categories.entity";
+import { IsBoolean, IsDate, IsDefined, IsEmpty, IsNumber } from "class-validator";
 import { CommentEntity } from "src/comment/comment.entity";
 import { UserEntity } from "src/user/user.entity";
 
@@ -9,13 +8,15 @@ export class ArticleDTO {
     id : string;
 
     @IsEmpty()
-    nom : string;
+    titre : string;
 
     @IsEmpty()
     contenu : string;
 
+    @IsBoolean()
     published : boolean;
 
+    @IsNumber()
     views : number;
 
     @IsDate()
@@ -28,6 +29,7 @@ export class ArticleDTO {
 
     auteur : UserEntity;
 
-    categorieIds : CategorieEntity[];
+    @IsDefined()
+    categorieIds? : string[];
     
 }
