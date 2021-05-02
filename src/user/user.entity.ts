@@ -1,5 +1,5 @@
 import { ArticleEntity } from "../articles/articles.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('users')
 export class UserEntity{
@@ -12,6 +12,27 @@ export class UserEntity{
     @Column({ type: 'varchar', length:300})
     nom: string;
 
+    @Column({ default : '', type : 'text'})
+    avatar : string ;
+
+    @Column({type: 'varchar', unique : true})
+    email : string;
+
+    @Column({ select : false})
+    password? : string;
+    
+    @Column({ type : 'boolean', default : false })
+    isAuteur? : boolean;
+
+    @Column({ type : 'boolean', default : false})
+    isAdmin? : boolean;
+
     @OneToMany( type => ArticleEntity, article => article.auteur)
     articles? : ArticleEntity[];
+
+    @CreateDateColumn({ type : 'timestamp', default:() => 'CURRENT_TIMESTAMP'})
+    createdAt? : Date;
+
+    @UpdateDateColumn({ type : 'timestamp'})
+    updatedAt : Date;
 }
