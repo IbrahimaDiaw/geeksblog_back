@@ -110,10 +110,10 @@ export class ArticlesService {
     }
 
 
-    async createArticle ( articleDTO : ArticleDTO) : Promise<ArticleEntity>{
+    async createArticle ( articleDTO : ArticleDTO, userEmail : string) : Promise<ArticleEntity>{
          const articleCreate : ArticleEntity = { ...articleDTO };
          articleCreate.categories = await this.categorieIdsToEntities(articleDTO.categorieIds);
-
+         articleCreate.auteur = await this.userService.getUserByEmail(userEmail);
         return await this.articleRepository.save(articleCreate);
     }
 

@@ -6,6 +6,9 @@ export class UserEntity{
     @PrimaryGeneratedColumn('uuid')
     id : string
 
+    @Column({ type : 'varchar', unique : true, length : 50})
+    username? : string;
+
     @Column({ type: 'varchar', length:300})
     prenom: string;
 

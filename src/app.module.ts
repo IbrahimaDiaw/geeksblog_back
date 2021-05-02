@@ -8,9 +8,10 @@ import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DATABASE_CONFIG } from './orm.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(DATABASE_CONFIG), ArticlesModule, CategoriesModule, UserModule, CommentModule],
+  imports: [TypeOrmModule.forRoot(DATABASE_CONFIG), ArticlesModule, CategoriesModule, UserModule, CommentModule, AuthModule],
   controllers: [AppController, CategoriesController],
   providers: [AppService],
 })

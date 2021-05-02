@@ -33,14 +33,14 @@ export class CommentService {
 
        }
 
-       async createComment( articleId : string, commentDto : CommentDTO ) : Promise<CommentEntity>{
+       async createComment( articleId : string, commentDto : CommentDTO, userEmail : string ) : Promise<CommentEntity>{
 
             const article = await this.articleService.getArticleById(articleId);
             const comment = new CommentEntity();
 
             comment.articles = article;
             comment.message = commentDto.message;
-            comment.auteur = commentDto.auteur;
+            comment.auteur = (await this.userService.getUserByEmail(userEmail)).username;
             const commentCreate = await this.commentRepository.save(comment);
             return this.getCommentById(commentCreate.id);
        } 
