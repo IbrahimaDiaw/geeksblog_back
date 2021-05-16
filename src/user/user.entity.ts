@@ -16,7 +16,7 @@ export class UserEntity{
     nom: string;
 
     @Column({ default : '', type : 'text'})
-    avatar : string ;
+    avatar? : string ;
 
     @Column({type: 'varchar', unique : true})
     email : string;
