@@ -13,11 +13,12 @@ import { PasswordDTO } from './password.dto';
 export class AuthService {
 
     public constructor(
+        
         private readonly userService : UserService,
         private jwtServie : JwtService,
     ){}
 
-    public async login( userLogin : LoginDTO) : Promise<JwtToken>{
+    public async sigin( userLogin : LoginDTO) : Promise<JwtToken>{
 
         const newUser :UserEntity = {
             ...userLogin,
@@ -31,17 +32,24 @@ export class AuthService {
 
     }
 
-    public async EditPassword( userId : string, passwords : PasswordDTO ){
+    public async login(user: LoginDTO) : Promise<UserEntity> {
+        user.email = user.email.toLowerCase();
+        
 
-        const user = await this.userService.getUserById(userId);
-        // const login : LoginDTO = {
-        //     email : user.email,
-        //     password : passwords.password,
-        // };
-
-        //const verifiedUser = await this.validateUserByPassword(login);
-
+        return    
     }
+
+    // public async EditPassword( userId : string, passwords : PasswordDTO ){
+
+    //     const user = await this.userService.getUserById(userId);
+    //     // const login : LoginDTO = {
+    //     //     email : user.email,
+    //     //     password : passwords.password,
+    //     // };
+
+    //     //const verifiedUser = await this.validateUserByPassword(login);
+
+    // }
 
     // private async validateUserByPassword(user: LoginDTO): Promise<UserEntity> {
     //     user.email = user.email.toLowerCase();
